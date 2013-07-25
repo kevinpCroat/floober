@@ -1,4 +1,4 @@
-from flask import Flask,jsonify,make_response,abort,render_template
+from flask import Flask,jsonify,make_response,abort,render_template,request
 import json
 
 app = Flask(__name__)
@@ -10,7 +10,7 @@ def index():
 
 @app.errorhandler(404)
 def not_found(error):
-	return make_response(jsonify({'error':'Resource not found'}), 404)
+	return make_response(jsonify({'error':str('Resource not found: ' + request.url)}), 404)
 
 
 @app.route('/api/trips', methods= ['GET'])
