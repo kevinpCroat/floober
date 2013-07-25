@@ -31,14 +31,14 @@ def close_db_conn(exception):
 @app.route('/')
 @app.route('/api')
 def index():
-	db = connect_db()
-	cur = db.execute('Select driver_id from event_trip')
-	driver_list = cur.fetchall()
+	#db = connect_db()
+	#cur = db.execute('Select driver_id from event_trip')
+	#driver_list = cur.fetchall()
 	
-	drivers = []
+	#drivers = []
 	
-	for each_driver in driver_list:
-		drivers.append({'driver_id':each_driver[0]})
+	#for each_driver in driver_list:
+		#drivers.append({'driver_id':each_driver[0]})
 	
 	#return jsonify( {'driver': drivers})
 	return render_template('index.html')
@@ -103,17 +103,15 @@ def get_total_number_of_clients(start_date=None,end_date=None):
 def get_total_number_of_trips_last_hour():
 	db = connect_db()
 	
-
 	cur = db.execute("Select count(*) from event_trip where start_time between  datetime('now','-1 hours') and datetime('now') and driver_id is not null")
-	
 	trips_count = cur.fetchall()
 	
 	#added in these lists so I always return a list of dicts
 	trips_hr_list = []
 	total_num_of_trips = {}
 	total_num_of_trips['time_slice']='last_hour'
-	total_num_of_trips['clients']=client_count[0][0]
-	clients_hr_list.append(total_num_of_trips)
+	total_num_of_trips['clients']=trips_count[0][0]
+	trips_hr_list.append(total_num_of_trips)
 
 	return jsonify({'total_number_of_trips_last_hour' : trips_hr_list})
 
@@ -122,17 +120,20 @@ def get_total_number_of_trips_last_hour():
 def get_miles_per_client(start_date=None,end_date=None):
 	pass
 	
-	if start_date and end_date:
-		miles_per_client = {}
-		miles_per_client['start_date']=start_date
-		miles_per_client['end_date']=end_date
-		miles_per_client['client_id']='33'
-		miles_per_client['miles']='15'
-	else:
-		miles_per_client = 22
+	db = connect_db()
+	
+	cur = db.execute("select sum(distance) as dist,client_id from event_trip group by client_id")
+	client_list = cur.fetchall()
+	
+	miles_client_list = []
+	
+	for each_client in client_list:
+		miles_client_list.append({'client_id':each_client[1], 'distance':each_client[0]})
+	
+	#return jsonify( {'driver': drivers})
 		
 		
-	return jsonify({'total_miles_per_client' : miles_per_client})
+	return jsonify({'total_miles_per_client' : miles_client_list})
 
 @app.route('/api/trips/fare/avg/city/<upper_right>/<lower_left>' , methods = ['GET'])
 @app.route('/api/trips/fare/avg/city/<upper_right>/<lower_left>/<start_date>/<end_date>' , methods = ['GET'])

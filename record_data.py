@@ -1,5 +1,5 @@
 #import packages
-import MySQLdb as sql
+import sqlite3 as sql
 import logging
 import json
 
