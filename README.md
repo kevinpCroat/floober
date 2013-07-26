@@ -3,7 +3,7 @@ floober
 
 This is a RESTful api you can use to access data regarding the floober service - powered by flask. 
 
-cd into app_dir
+cd into app's dir
 
 sqlite3 /tmp/floober.db < models.sql
 
