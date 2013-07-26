@@ -10,8 +10,10 @@ PASSWORD = ''
 #setup the app
 app = Flask(__name__)
 app.config.from_object(__name__)
+#do i need this?
 app.config.from_envvar('APP_SETTINGS', silent=True)
 
+#set func for connecting to db
 def connect_db():
 	top = _app_ctx_stack.top
 	if not hasattr(top,'sqlite_db'):
@@ -20,7 +22,8 @@ def connect_db():
 		top.sqlite_db = sqlite_db
 		
 	return top.sqlite_db
-	
+
+#func for closing db conn
 @app.teardown_appcontext
 def close_db_conn(exception):
 	top = _app_ctx_stack.top
@@ -28,16 +31,18 @@ def close_db_conn(exception):
 		top.sqlite_db.close()
 
 
+#Routing for base urls to index homepage
 @app.route('/')
 @app.route('/api')
 def index():
 	return render_template('index.html')
 
+# handle all 404's with a Resource not found msg
 @app.errorhandler(404)
 def resource_not_found(error):
 	return make_response(jsonify({'error':str('Resource not found: ' + request.url)}), 404)
 
-
+#endpoint for total number of trips taken
 @app.route('/api/trips', methods= ['GET'])
 @app.route('/api/trips/<start_date>/<end_date>', methods = ['GET'])
 def get_number_of_trips(start_date=None,end_date=None):
@@ -62,7 +67,7 @@ def get_number_of_trips(start_date=None,end_date=None):
 
 	return jsonify({'total_number_of_trips' : trips_list})
 	
-
+#endpoint for unique number of clients
 @app.route('/api/clients', methods = ['GET'])
 @app.route('/api/clients/<start_date>/<end_date>', methods = ['GET'])
 def get_total_number_of_clients(start_date=None,end_date=None):
@@ -89,6 +94,7 @@ def get_total_number_of_clients(start_date=None,end_date=None):
 
 	return jsonify({'total_number_of_clients' : clients_list})
 
+#endpoint for trips taken within the last hour
 @app.route('/api/trips/hour', methods = ['GET'])
 def get_total_number_of_trips_last_hour():
 	db = connect_db()
@@ -105,6 +111,7 @@ def get_total_number_of_trips_last_hour():
 
 	return jsonify({'total_number_of_trips_last_hour' : trips_hr_list})
 
+#endpoint for miles per client
 @app.route('/api/clients/miles', methods = ['GET'])
 @app.route('/api/clients/miles/<start_date>/<end_date>', methods = ['GET'])
 def get_miles_per_client(start_date=None,end_date=None):
@@ -128,13 +135,14 @@ def get_miles_per_client(start_date=None,end_date=None):
 		
 	return jsonify({'total_miles_per_client' : miles_client_list})
 
+#endpoint for trips within a city
 @app.route('/api/trips/fare/avg/city/<upper_right>/<lower_left>' , methods = ['GET'])
 @app.route('/api/trips/fare/avg/city/<upper_right>/<lower_left>/<start_date>/<end_date>' , methods = ['GET'])
 def get_avg_fare_for_city(upper_right,lower_left,start_date=None,end_date=None):
 	pass
 	return jsonify({'avg_fare_for_city' : avg_fare_for_city})
 
-
+#endpoint for median driver rating
 @app.route('/api/driver/<int:driver_id>/rating/median', methods = ['GET'])
 @app.route('/api/driver/<int:driver_id>/rating/median/<start_date>/<end_date>', methods = ['GET'])
 def get_median_rating_for_driver(driver_id,start_date=None,end_date=None):
