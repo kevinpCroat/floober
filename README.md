@@ -10,7 +10,11 @@ sqlite3 /tmp/floober.db < models.sql
 ```
 
 to setup an initial data load:
+```shell
 python record_event_data.py #will run until you kill it
+```
+
+to setup gunicorn:
 
 ```shell
 gunicorn -w 4 -b 127.0.0.1:5060 floober:app
