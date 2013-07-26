@@ -31,16 +31,6 @@ def close_db_conn(exception):
 @app.route('/')
 @app.route('/api')
 def index():
-	#db = connect_db()
-	#cur = db.execute('Select driver_id from event_trip')
-	#driver_list = cur.fetchall()
-	
-	#drivers = []
-	
-	#for each_driver in driver_list:
-		#drivers.append({'driver_id':each_driver[0]})
-	
-	#return jsonify( {'driver': drivers})
 	return render_template('index.html')
 
 @app.errorhandler(404)
@@ -118,19 +108,22 @@ def get_total_number_of_trips_last_hour():
 @app.route('/api/clients/miles', methods = ['GET'])
 @app.route('/api/clients/miles/<start_date>/<end_date>', methods = ['GET'])
 def get_miles_per_client(start_date=None,end_date=None):
-	pass
 	
 	db = connect_db()
 	
-	cur = db.execute("select sum(distance) as dist,client_id from event_trip group by client_id")
+	if not start_date:
+		qry = "select sum(distance) as dist,client_id from event_trip group by client_id"
+	elif start_date:
+		qry = "select sum(distance) as dist,client_id from event_trip where start_time between '%s' and '%s' group by client_id" % (start_date,end_date)
+		
+		
+	cur = db.execute(qry)
 	client_list = cur.fetchall()
 	
 	miles_client_list = []
 	
 	for each_client in client_list:
 		miles_client_list.append({'client_id':each_client[1], 'distance':each_client[0]})
-	
-	#return jsonify( {'driver': drivers})
 		
 		
 	return jsonify({'total_miles_per_client' : miles_client_list})
@@ -146,14 +139,26 @@ def get_avg_fare_for_city(upper_right,lower_left,start_date=None,end_date=None):
 @app.route('/api/driver/<int:driver_id>/rating/median/<start_date>/<end_date>', methods = ['GET'])
 def get_median_rating_for_driver(driver_id,start_date=None,end_date=None):
 	"""gets the median rating for a driver"""
-	pass
+	
+	if not start_date:
+		qry = "select sum(distance) as dist,client_id from event_trip group by client_id"
+	elif start_date:
+		qry = "select sum(distance) as dist,client_id from event_trip where start_time between '%s' and '%s' group by client_id" % (start_date,end_date)
+	
+	cur = db.execute(qry)
+	driver_list = cur.fetchall()
+	
+	#for consistency I always return a list of dict(s)
+	median_driver_list = []
 	median_rating_for_driver = {}
 	median_rating_for_driver['driver_id']=driver_id
 	median_rating_for_driver['median_rating']=median_rating
 	median_rating_for_driver['start_date']=start_date
 	median_rating_for_driver['end_date']=end_date
+	
+	median_driver_list.append(median_rating_for_driver)
 		
-	return jsonify({'median_rating_for_driver' : median_rating_for_driver})
+	return jsonify({'median_rating_for_driver' : median_driver_list})
 
 
 if __name__ == "__main__":

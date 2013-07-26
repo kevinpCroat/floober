@@ -6,7 +6,7 @@ import json
 logging.basicConfig(filename='db_exceptions.log', level=logging.DEBUG)
 
 #setup the database conn
-db = sql.connect(db='event_trip',username='rootsy',passwd='lfytopia',host='server_ip')
+db = sql.connect('/tmp/floober.db')
 #instantiate the cursor class
 cursor = db.cursor()
 
