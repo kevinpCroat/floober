@@ -14,6 +14,7 @@ create table event_trip(
 	UNIQUE (client_id,driver_id,start_time)
 );
 
+-- INITIAL TEST DATA
 INSERT INTO event_trip (client_id,driver_id,start_time,lat,lon,fare,distance,rating)
  VALUES (1,2,'2013-07-01 11:33:33', 37.791812,-122.432759,12.39,3.54,5);
 INSERT INTO event_trip (client_id,driver_id,start_time,lat,lon,fare,distance,rating)

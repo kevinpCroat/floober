@@ -2,6 +2,7 @@ from flask import Flask,jsonify,make_response,abort,render_template,request,_app
 import json
 from sqlite3 import dbapi2 as sqlite3
 
+
 #db_config
 DATABASE = '/tmp/floober.db'
 USERNAME = ''
@@ -10,6 +11,7 @@ PASSWORD = ''
 #setup the app
 app = Flask(__name__)
 app.config.from_object(__name__)
+
 
 #set func for connecting to db
 def connect_db():
@@ -57,6 +59,9 @@ def get_number_of_trips(start_date=None,end_date=None):
 		cur = db.execute(qry)
 	
 	trip_count = cur.fetchall()
+	
+	if len(trip_count)==0:
+		return jsonify({'total_miles_per_client' : 'NULL'})
 	
 	trips_list = []
 	total_num_of_trips = {}
@@ -121,7 +126,7 @@ def get_miles_per_client(start_date=None,end_date=None):
 	db = connect_db()
 	
 	if not start_date:
-		qry = "select sum(distance) as dist,client_id from event_trip group by client_id"
+		qry = """SELECT sum(distance) as dist,client_id from event_trip group by client_id"""
 	elif start_date:
 		start_date = start_date[0:4] + '-' + start_date[4:6] + '-' + start_date[6:8]
 		end_date = end_date[0:4] + '-' + end_date[4:6] + '-' + end_date[6:8]
@@ -130,6 +135,9 @@ def get_miles_per_client(start_date=None,end_date=None):
 		
 	cur = db.execute(qry)
 	client_list = cur.fetchall()
+	
+	if len(client_list)==0:
+		return jsonify({'total_miles_per_client' : 'NULL'})
 	
 	miles_client_list = []
 	
@@ -140,10 +148,40 @@ def get_miles_per_client(start_date=None,end_date=None):
 	return jsonify({'total_miles_per_client' : miles_client_list})
 
 #endpoint for trips within a city
-@app.route('/api/trips/fare/avg/city/<upper_right>/<lower_left>' , methods = ['GET'])
-@app.route('/api/trips/fare/avg/city/<upper_right>/<lower_left>/<start_date>/<end_date>' , methods = ['GET'])
-def get_avg_fare_for_city(upper_right,lower_left,start_date=None,end_date=None):
-	pass
+@app.route('/api/trips/fare/avg/city/<int:radius>/<lat>/<lon>' , methods = ['GET'])
+@app.route('/api/trips/fare/avg/city/<int:radius>/<lat>/<lon>/<start_date>/<end_date>' , methods = ['GET'])
+def get_avg_fare_for_city(radius,lat,lon,start_date=None,end_date=None):
+	"""get using the haversine formula"""
+	db = connect_db()
+	
+	def in_circle(center_x, center_y, radius, x, y):
+	    square_dist = (center_x - x) ** 2 + (center_y - y) ** 2
+	    return square_dist <= radius ** 2
+	
+	if not start_date:
+		qry = """ select fare,lat,lon from event_trip """
+	elif start_date:
+		start_date = start_date[0:4] + '-' + start_date[4:6] + '-' + start_date[6:8]
+		end_date = end_date[0:4] + '-' + end_date[4:6] + '-' + end_date[6:8]
+		qry = """ select fare,lat,lon from event_trip where start_time between '%s' and '%s' """ % (start_date,end_date)
+	
+	cur = db.execute(qry)
+	fares = cur.fetchall()
+	
+	if len(fares)==0:
+		return jsonify({'avg_fare_for_city' : 'NULL'})
+		
+	fare_list = []
+	for each_fare in fares:
+		#if in_circle(lat,lon,radius,each_fare[1],each_fare[2]) == True:
+		fare_list.append(each_fare[0])
+	
+	#get the avg
+	avg_fare_for_city = float(sum(fare_list))/len(fare_list)
+	
+	#round it
+	avg_fare_for_city = round(avg_fare_for_city,2)
+	
 	return jsonify({'avg_fare_for_city' : avg_fare_for_city})
 
 #endpoint for median driver rating

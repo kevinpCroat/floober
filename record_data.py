@@ -24,12 +24,13 @@ def record_trip_event(client_id,driver_id,start_time,lat,lon,fare,distance,ratin
 	cur.execute(sql_insert)
 	db.commit()
 	print 'success'
-	
+		
 
 def main():
 	
 	while True:
 		try:
+			#generate random data and insert into db
 			distance = round(random.uniform(1,30),2)
 			record_trip_event(random.randrange(1,40,1),random.randrange(1,12,1),time.strftime('%Y-%m-%d %H:%M:%S'), round(random.uniform(30,40),6),round(random.uniform(-122,-70),6), (3.5)+(1.75*distance), distance, random.randrange(1,6,1))
 		except Exception, exc:
