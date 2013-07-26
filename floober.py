@@ -153,9 +153,9 @@ def get_miles_per_client(start_date=None,end_date=None):
 def get_avg_fare_for_city(radius,lat,lon,start_date=None,end_date=None):
 	"""get using the haversine formula"""
 	db = connect_db()
-	
-	def in_circle(center_x, center_y, radius, x, y):
-	    square_dist = (center_x - x) ** 2 + (center_y - y) ** 2
+
+	def point_in_circle(center_x, center_y, radius, x, y):
+	    square_dist = (float(center_x)- x) ** 2 + (float(center_y) - y) ** 2
 	    return square_dist <= radius ** 2
 	
 	if not start_date:
@@ -173,8 +173,8 @@ def get_avg_fare_for_city(radius,lat,lon,start_date=None,end_date=None):
 		
 	fare_list = []
 	for each_fare in fares:
-		#if in_circle(lat,lon,radius,each_fare[1],each_fare[2]) == True:
-		fare_list.append(each_fare[0])
+		if point_in_circle(lat,lon,radius,float(each_fare[1]),float(each_fare[2])) == True:
+			fare_list.append(each_fare[0])
 	
 	#get the avg
 	avg_fare_for_city = float(sum(fare_list))/len(fare_list)
