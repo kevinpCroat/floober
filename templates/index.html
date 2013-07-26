@@ -3,33 +3,39 @@
 {% block body %}
 <h2>Here's the fancy floober api docs</h1>
 	<p>
-		<strong>Request:</strong> Total trips driven
+		<strong>Request:</strong> Total trips driven (endpoints don't end in slashes)
 		<br />
 		<strong>URI:</strong> /api/trips
 	</p>
 	<p>
-		<strong>Request:</strong> Total trips driven
+		<strong>Request:</strong> Total trips driven in date range YYYYMMDD => all endpoints use this fmt
 		<br />
-		<strong>URI:</strong> /api/trips
+		<strong>URI:</strong> /api/trips/:start_date/:end_date
 	</p>
 	<p>
-		<strong>Request:</strong> Total trips driven
+		<strong>Request:</strong> Total number of clients w/ optional date range
 		<br />
-		<strong>URI:</strong> /api/trips
+		<strong>URI:</strong> /api/clients/:start_date/:end_date
 	</p>
 	<p>
-		<strong>Request:</strong> Total trips driven
+		<strong>Request:</strong> Total trips driven in the last hr
 		<br />
-		<strong>URI:</strong> /api/trips
+		<strong>URI:</strong> /api/trips/hour
 	</p>
 	<p>
-		<strong>Request:</strong> Total trips driven
+		<strong>Request:</strong> Total miles per client w/ optional date range
 		<br />
-		<strong>URI:</strong> /api/trips
+		<strong>URI:</strong> /api/clients/miles/:start_date/:end_date
 	</p>
 	<p>
-		<strong>Request:</strong> Total trips driven
+		<strong>Request:</strong> Avg for a city given center point and radius w/optional date range
 		<br />
-		<strong>URI:</strong> /api/trips
+		<strong>URI:</strong> /api/trips/fare/avg/city/:radius/:lat/:lon/:start_date/:end_date
 	</p>
+	<p>
+		<strong>Request:</strong> Median rating for a driver w/ optional date range
+		<br />
+		<strong>URI:</strong> /api/driver/:driver_id/rating/median/:start_date/:end_date
+	</p>
+
 {% endblock %}
