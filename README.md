@@ -5,23 +5,22 @@ This is a RESTful api you can use to access data regarding the floober service -
 
 cd into app's dir
 
+```shell
 sqlite3 /tmp/floober.db < models.sql
+```
 
 to setup an initial data load:
 python record_event_data.py #will run until you kill it
 
-gunicorn -w 4 -b 127.0.0.1:5060 floober:app
-
-You can now access the api. 
-
-You can run without gunicorn by running python floober.py
-
-```ruby
-require 'redcarpet'
-markdown = Redcarpet.new("Hello World!")
-puts markdown.to_html
-```
-
 ```shell
 gunicorn -w 4 -b 127.0.0.1:5060 floober:app
 ```
+
+You can now access the api. 
+
+You can run without gunicorn by running:
+```shell
+python floober.py
+```
+
+
