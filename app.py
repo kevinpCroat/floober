@@ -149,13 +149,28 @@ def get_median_rating_for_driver(driver_id,start_date=None,end_date=None):
 	"""gets the median rating for a driver"""
 	
 	if not start_date:
-		qry = "select sum(distance) as dist,client_id from event_trip group by client_id"
+		qry = "select rating,driver_id from event_trip where driver_id=%d" % driver_id
 	elif start_date:
-		qry = "select sum(distance) as dist,client_id from event_trip where start_time between '%s' and '%s' group by client_id" % (start_date,end_date)
+		qry = "select rating,driver_id from event_trip where driver_id=%d and start_time between '%s' and '%s' " % (driver_id,start_date,end_date)
+	
+	#one rating list per driver
 	
 	cur = db.execute(qry)
-	driver_list = cur.fetchall()
+	driver_raings = cur.fetchall()
 	
+	driver_rating_list = []
+	for each_rating in driver_ratings:
+		driver_rating_list.append(each_rating[0])
+		driver_rating_list.sort()
+		
+		driver_id = each_rating[1]
+				
+	#compute the median
+	if len(driver_rating_list) % 2 == 0:
+		median_rating = (median[len(driver_rating_list)/2-1]+median[len(driver_rating_list)/2])/2
+	else:
+		median_rating = median[len(driver_rating_list)/2]
+
 	#for consistency I always return a list of dict(s)
 	median_driver_list = []
 	median_rating_for_driver = {}
