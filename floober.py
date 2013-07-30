@@ -122,7 +122,7 @@ def get_total_number_of_trips_last_hour():
 @app.route('/api/clients/miles', methods = ['GET'])
 @app.route('/api/clients/miles/<start_date>/<end_date>', methods = ['GET'])
 def get_miles_per_client(start_date=None,end_date=None):
-	
+	"""gets the miles traveled for each client, start_date and end_date are opt"""	
 	db = connect_db()
 	
 	if not start_date:
