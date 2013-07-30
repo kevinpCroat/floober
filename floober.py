@@ -151,7 +151,7 @@ def get_miles_per_client(start_date=None,end_date=None):
 @app.route('/api/trips/fare/avg/city/<int:radius>/<lat>/<lon>' , methods = ['GET'])
 @app.route('/api/trips/fare/avg/city/<int:radius>/<lat>/<lon>/<start_date>/<end_date>' , methods = ['GET'])
 def get_avg_fare_for_city(radius,lat,lon,start_date=None,end_date=None):
-	"""get using the haversine formula"""
+	"""compute the average for in a city given radius,lat and lon"""
 	db = connect_db()
 
 	def point_in_circle(center_x, center_y, radius, x, y):
