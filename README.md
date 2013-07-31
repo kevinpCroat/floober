@@ -27,4 +27,7 @@ You can run without gunicorn by running:
 python floober.py
 ```
 
-
+If you want to get fancy you can run floober w/ gevent.
+```shell
+python floober_gevent.py
+```
