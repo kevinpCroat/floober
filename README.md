@@ -27,7 +27,7 @@ You can run without gunicorn by running:
 python floober.py
 ```
 
-If you want to get fancy you can run floober w/ gevent.
+If you want to get fancy you can run floober w/ gevent. Caution: Do NOT run gevent w/ gunicorn - unicorns will die. and so will your server.
 ```shell
 python floober_gevent.py
 ```
