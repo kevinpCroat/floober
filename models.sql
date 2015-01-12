@@ -2,15 +2,15 @@
 -- author: kevin p
 drop table if exists event_trip;
 create table event_trip(
-	row_id integer not null primary key autoincrement,
-	client_id integer not null,
-	driver_id integer not null,
-	start_time datetime not null,
-	lat float not null,
-	lon float not null,
-	fare float not null,
-	distance float not null,
-	rating integer not null, 
+	row_id      INTEGER  not null primary key autoincrement,
+	client_id   INTEGER  not null,
+	driver_id   INTEGER  not null,
+	start_time  DATETIME not null,
+	lat         FLOAT    not null,
+	lon         FLOAT    not null,
+	fare        FLOAT    not null,
+	distance    FLOAT    not null,
+	rating      INTEGER  not null, 
 	UNIQUE (client_id,driver_id,start_time)
 );
 
